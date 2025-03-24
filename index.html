@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Presentation Topic Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .generate-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+        .generate-btn:hover {
+            background-color: #2980b9;
+        }
+        .topic-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #3498db;
+        }
+        .main-topic {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .main-topic-icon {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        .subtopics {
+            margin-left: 35px;
+        }
+        .subtopic {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .hidden {
+            display: none;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weekly Presentation Topic Generator</h1>
+        
+        <p>Looking for inspiration for your weekly knowledge-sharing presentations? Click the button below to generate a random topic with specific subtopics to explore!</p>
+        
+        <button id="generateBtn" class="generate-btn">Generate New Topic</button>
+        
+        <div id="topicContainer" class="topic-container hidden">
+            <div id="mainTopic" class="main-topic">
+                <span id="topicIcon" class="main-topic-icon"></span>
+                <span id="topicText"></span>
+            </div>
+            
+            <div class="subtopics">
+                <p>Here are three specific areas to explore:</p>
+                <div id="subtopic1" class="subtopic"></div>
+                <div id="subtopic2" class="subtopic"></div>
+                <div id="subtopic3" class="subtopic"></div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Created for weekly knowledge exploration sessions. Happy learning!</p>
+    </footer>
+
+    <script>
+        // Topic categories with their icons and specific subtopics
+        const topics = [
+            {
+                category: "Knowledge, Wisdom & the Human Mind",
+                icon: "🧠",
+                subtopics: [
+                    "Cognitive biases that affect everyday decision making",
+                    "How knowledge is transferred across generations",
+                    "The difference between intelligence and wisdom",
+                    "Ancient knowledge systems vs. modern science",
+                    "The evolution of human memory and recall",
+                    "Knowledge representation in different cultures",
+                    "How experts think differently from novices",
+                    "Critical thinking skills for the information age",
+                    "Tacit vs. explicit knowledge in learning"
+                ]
+            },
+            {
+                category: "Natural Sciences (Physics, Biology, Chemistry, etc.)",
+                icon: "🔬",
+                subtopics: [
+                    "Extremophiles: life in the most hostile environments on Earth",
+                    "Quantum entanglement and its practical applications",
+                    "The chemistry behind everyday cooking transformations",
+                    "Biomimicry: how nature inspires scientific innovation",
+                    "Strange phenomena at the quantum level",
+                    "Geological processes that shaped our planet",
+                    "The human microbiome and its influence on health",
+                    "Chemical elements that changed history",
+                    "The physics of music and sound"
+                ]
+            },
+            {
+                category: "Universe, Space & Astronomy",
+                icon: "🌌",
+                subtopics: [
+                    "The future of space exploration in the next 50 years",
+                    "Exoplanets and the search for habitable worlds",
+                    "Black holes: what we know and what remains mysterious",
+                    "The life cycle of stars from birth to death",
+                    "How the James Webb telescope is changing our understanding of the cosmos",
+                    "The possibility of life elsewhere in our solar system",
+                    "Dark matter and dark energy: the invisible universe",
+                    "The geology and atmospheres of other planets",
+                    "Ancient astronomy and how different cultures mapped the stars"
+                ]
+            },
+            {
+                category: "Philosophy & Ethics",
+                icon: "🏛️",
+                subtopics: [
+                    "Thought experiments that challenge moral intuitions",
+                    "Eastern vs. Western philosophical traditions",
+                    "The trolley problem and its relevance to modern technology",
+                    "Existentialism in everyday life",
+                    "Philosophical perspectives on consciousness",
+                    "Ancient philosophy's relevance to modern problems",
+                    "The ethics of artificial intelligence",
+                    "Different cultural approaches to the concept of justice",
+                    "Philosophy of science: how we know what we know"
+                ]
+            },
+            {
+                category: "Psychology & Human Behavior",
+                icon: "🧬",
+                subtopics: [
+                    "The psychology of habit formation and change",
+                    "Cross-cultural differences in emotional expression",
+                    "How social media affects brain development and behavior",
+                    "The psychology of persuasion and influence",
+                    "The science of happiness and well-being",
+                    "Evolutionary psychology: why we behave the way we do",
+                    "The neuroscience of decision-making",
+                    "Psychological biases in financial decisions",
+                    "How childhood experiences shape adult personality"
+                ]
+            },
+            {
+                category: "Technology, AI & Innovation",
+                icon: "🤖",
+                subtopics: [
+                    "How machine learning is transforming healthcare",
+                    "Ethical considerations in AI development",
+                    "The history of failed technologies and what we can learn",
+                    "Biomimetic technologies inspired by nature",
+                    "The evolution of computing: from vacuum tubes to quantum computers",
+                    "How innovation spreads through society",
+                    "The impact of automation on work and jobs",
+                    "Everyday algorithms that shape our lives",
+                    "The digital divide: technology inequality around the world"
+                ]
+            },
+            {
+                category: "History & Civilization",
+                icon: "📚",
+                subtopics: [
+                    "Lost ancient technologies we still don't understand",
+                    "How pandemics have shaped human history",
+                    "The history of writing and communication",
+                    "Historic trade routes that connected the ancient world",
+                    "Forgotten women who changed history",
+                    "The evolution of cities and urban planning",
+                    "How climate changes affected historical civilizations",
+                    "The history of everyday objects we take for granted",
+                    "Turning points in history that could have gone differently"
+                ]
+            },
+            {
+                category: "Creativity, Art & Culture",
+                icon: "💡",
+                subtopics: [
+                    "How different cultures define beauty and aesthetics",
+                    "The science behind creativity and inspiration",
+                    "Art movements that were revolutionary for their time",
+                    "The evolution of storytelling across media",
+                    "How architecture reflects cultural values",
+                    "The psychology of music and why certain songs affect us",
+                    "How art has been used as political resistance",
+                    "Cultural preservation in the digital age",
+                    "The neuroscience of aesthetic experiences"
+                ]
+            },
+            {
+                category: "Economics, Money & Systems",
+                icon: "📊",
+                subtopics: [
+                    "Alternative economic systems beyond capitalism and socialism",
+                    "The psychology of spending and saving",
+                    "How different currencies evolved throughout history",
+                    "The impact of basic income experiments around the world",
+                    "Behavioral economics and irrational financial decisions",
+                    "How economic policies shape everyday life",
+                    "The economics of happiness and well-being",
+                    "Sustainable economies and circular economic models",
+                    "The evolution of markets and trade"
+                ]
+            },
+            {
+                category: "Media, Communication & Society",
+                icon: "📱",
+                subtopics: [
+                    "How language shapes thought and perception",
+                    "The evolution of news and information sharing",
+                    "Digital communication vs. face-to-face interaction",
+                    "How memes function as cultural transmission",
+                    "The psychology of online communities",
+                    "Media literacy in the age of misinformation",
+                    "Non-verbal communication across cultures",
+                    "The impact of advertising on societal values",
+                    "How social media has transformed social movements"
+                ]
+            },
+            {
+                category: "Health, Consciousness & Wellbeing",
+                icon: "🧘‍♂️",
+                subtopics: [
+                    "The science behind meditation and mindfulness",
+                    "Different cultural approaches to mental health",
+                    "The placebo effect and the mind-body connection",
+                    "Sleep science and the importance of rest",
+                    "Traditional medicine systems from around the world",
+                    "The neuroscience of consciousness",
+                    "Blue zones: what we can learn from the world's longest-lived communities",
+                    "The psychology of resilience and overcoming adversity",
+                    "How environment affects physical and mental health"
+                ]
+            },
+            {
+                category: "Environment, Climate & Sustainability",
+                icon: "♻️",
+                subtopics: [
+                    "Innovative solutions to environmental challenges",
+                    "Traditional ecological knowledge and conservation",
+                    "Climate adaptation strategies from around the world",
+                    "The hidden environmental impact of everyday products",
+                    "Rewilding and ecological restoration success stories",
+                    "Urban sustainability and green city design",
+                    "The psychology of environmental behavior change",
+                    "Ocean conservation and the blue economy",
+                    "Sustainable food systems for the future"
+                ]
+            },
+            {
+                category: "Power, Politics & Strategy",
+                icon: "⚔️",
+                subtopics: [
+                    "Game theory in everyday negotiations",
+                    "How different political systems solve similar problems",
+                    "The psychology of leadership and influence",
+                    "Historic diplomatic strategies that prevented conflicts",
+                    "The evolution of warfare and conflict resolution",
+                    "How geography shapes political systems",
+                    "Decision-making strategies in high-stakes situations",
+                    "The balance of power in international relations",
+                    "Alternative governance models throughout history"
+                ]
+            },
+            {
+                category: "Future, Speculation & Sci-Fi Concepts",
+                icon: "🚀",
+                subtopics: [
+                    "How science fiction has predicted (or failed to predict) the future",
+                    "Transhumanism and the future of human evolution",
+                    "Life extension technologies and their societal implications",
+                    "The future of cities and human habitation",
+                    "Colonizing other planets: challenges and possibilities",
+                    "How climate change might reshape global politics",
+                    "Future scenarios for artificial intelligence development",
+                    "Post-scarcity economies and their implications",
+                    "Future transportation and its impact on society"
+                ]
+            },
+            {
+                category: "Learning, Intelligence & Self-Development",
+                icon: "📈",
+                subtopics: [
+                    "Learning techniques based on neuroscience",
+                    "Different types of intelligence beyond IQ",
+                    "How experts practice differently than amateurs",
+                    "The future of education and learning",
+                    "Cross-cultural approaches to child development",
+                    "The science of skill acquisition",
+                    "Self-directed learning in the digital age",
+                    "The role of failure in learning and growth",
+                    "Mental models for better decision-making"
+                ]
+            },
+            {
+                category: "Games, Simulation & Game Theory",
+                icon: "🎮",
+                subtopics: [
+                    "What games reveal about human psychology",
+                    "The history and cultural importance of games",
+                    "Simulation theory and its philosophical implications",
+                    "Game design principles applied to real-world problems",
+                    "Game theory in evolution and natural selection",
+                    "The educational potential of gaming",
+                    "Serious games for social change",
+                    "The mathematics behind popular games",
+                    "Virtual worlds and their social dynamics"
+                ]
+            },
+            {
+                category: "Anthropology, Culture & Human Evolution",
+                icon: "🌍",
+                subtopics: [
+                    "Cultural universals found across all human societies",
+                    "How tool use shaped human evolution",
+                    "The anthropology of food and cooking",
+                    "Cultural rituals and their psychological functions",
+                    "The evolution of cooperation and altruism",
+                    "Linguistic diversity and endangered languages",
+                    "How different cultures conceptualize time",
+                    "The archaeology of everyday life",
+                    "Cultural adaptations to extreme environments"
+                ]
+            }
+        ];
+
+        // DOM elements
+        const generateBtn = document.getElementById('generateBtn');
+        const topicContainer = document.getElementById('topicContainer');
+        const topicIcon = document.getElementById('topicIcon');
+        const topicText = document.getElementById('topicText');
+        const subtopic1 = document.getElementById('subtopic1');
+        const subtopic2 = document.getElementById('subtopic2');
+        const subtopic3 = document.getElementById('subtopic3');
+
+        // Generate random topic
+        function generateTopic() {
+            // Pick a random main topic
+            const randomTopicIndex = Math.floor(Math.random() * topics.length);
+            const selectedTopic = topics[randomTopicIndex];
+            
+            // Display the main topic
+            topicIcon.textContent = selectedTopic.icon;
+            topicText.textContent = selectedTopic.category;
+            
+            // Create array of indices and shuffle it
+            const indices = [...Array(selectedTopic.subtopics.length).keys()];
+            shuffleArray(indices);
+            
+            // Pick 3 random subtopics without repetition
+            subtopic1.textContent = selectedTopic.subtopics[indices[0]];
+            subtopic2.textContent = selectedTopic.subtopics[indices[1]];
+            subtopic3.textContent = selectedTopic.subtopics[indices[2]];
+            
+            // Show the topic container
+            topicContainer.classList.remove('hidden');
+        }
+
+        // Shuffle array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Event listener
+        generateBtn.addEventListener('click', generateTopic);
+
+        // Generate a topic on page load
+        window.onload = generateTopic;
+    </script>
+</body>
+</html>
